@@ -7,9 +7,16 @@ var User = require('../models/users');
 var passport = require('passport');
 var authenticate = require('../authenticate');
 const users = require('../models/users');
+const cors = require("./cors");
 
 
 router.use(bodyParser.json());
+
+
+router.options("*", cors.corsWithOptions, (req, res) => {
+  res.sendStatus(200);
+});
+
 
 /* GET users listing. */
 router.get('/', authenticate.verifyUser, authenticate.verifyAdmin, function(req, res, next) {
@@ -57,7 +64,7 @@ router.post('/signup', (req, res, next) => {
 });
 
 
-router.post('/login', passport.authenticate('local'), (req, res) => {
+router.post('/login', cors.corsWithOptions,passport.authenticate('local'), (req, res) => {
 
   var token = authenticate.getToken({_id: req.user._id});
   res.statusCode = 200;
